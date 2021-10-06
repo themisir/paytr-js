@@ -8,6 +8,5 @@ export type {
   PayTRValidateCallbackParams,
   PayTRMerchantParams,
   PayTRConstructorParams,
+  PayTRCallbackParams,
 } from "./interfaces";
-
-export type { callback } from "./express";

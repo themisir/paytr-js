@@ -1,11 +1,11 @@
 {
   "name": "paytr",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "main": "index.js",
   "license": "MIT",
   "type": "commonjs",
-  "types": "dist/index.d.ts",
-  "typings": "./dist/index.d.ts",
+  "types": "index.d.ts",
+  "typings": "./index.d.ts",
   "scripts": {
     "build": "tsc",
     "prepublish": "yarn build"

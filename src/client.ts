@@ -1,4 +1,4 @@
-import axios, { Axios, AxiosResponse } from "axios";
+import axios, { Axios, AxiosRequestConfig, AxiosResponse } from "axios";
 import { PayTRException } from "./errors";
 import type {
   PayTRConstructorParams,
@@ -8,7 +8,7 @@ import type {
   PayTRMerchantParams,
   PayTRValidateCallbackParams,
 } from "./interfaces";
-import { calculateHash, encodeUserBasket } from "./utils";
+import { calculateHash, encodeUserBasket, prepareParams } from "./utils";
 
 export class PayTRClient {
   private _merchantParams: PayTRMerchantParams;
@@ -30,13 +30,10 @@ export class PayTRClient {
       merchant_salt,
       max_installment,
       timeout_limit,
-      no_installment: _no_installment,
-      no_installment = _no_installment ? 1 : 0,
-      test_mode: _test_mode,
-      test_mode = _test_mode ? 1 : 0,
-      debug_on: _debug_on,
-      debug_on = _debug_on ? 1 : 0,
-    } = this._merchantParams;
+      no_installment,
+      test_mode,
+      debug_on,
+    } = prepareParams(this._merchantParams);
     const {
       user_ip,
       user_name,
@@ -48,9 +45,12 @@ export class PayTRClient {
       currency,
       merchant_ok_url,
       merchant_fail_url,
-      user_basket: _user_basket,
-      user_basket = encodeUserBasket(_user_basket),
-    } = params;
+    } = prepareParams(params);
+
+    // Convert user basket to base64 json
+    const user_basket = encodeUserBasket(params.user_basket);
+
+    // Callculate paytr hash
     const paytr_token = calculateHash(
       [
         merchant_id,
@@ -67,7 +67,9 @@ export class PayTRClient {
       ],
       merchant_key
     );
-    const data = {
+
+    // Request body
+    const data: Record<string, string> = {
       merchant_id,
       user_ip,
       merchant_oid,
@@ -88,13 +90,21 @@ export class PayTRClient {
       test_mode,
     };
 
-    const response = await this._client.post<
+    // Prepare request
+    const request: AxiosRequestConfig = {
+      method: "POST",
+      url: "https://www.paytr.com/odeme/api/get-token",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: new URLSearchParams(data),
+      responseType: "json",
+    };
+
+    const response = await this._client.request<
       any,
       AxiosResponse<PayTRGetTokenRawResponse>
-    >("https://www.paytr.com/odeme/api/get-token", data, {
-      responseType: "json",
-    });
+    >(request);
 
+    // Throw error if response type is not JSON (object)
     if (typeof response.data !== "object") {
       throw new PayTRException(
         "Invalid response received from PayTR",
@@ -102,6 +112,7 @@ export class PayTRClient {
       );
     }
 
+    // Throw error if response status is not 'success'
     if (response.data.status === "success") {
       return { token: response.data.token! };
     }

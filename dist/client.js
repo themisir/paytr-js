@@ -63,12 +63,13 @@ var PayTRClient = /** @class */ (function () {
     PayTRClient.prototype.getToken = function (params) {
         var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, merchant_id, merchant_key, merchant_salt, max_installment, timeout_limit, _no_installment, _c, no_installment, _test_mode, _d, test_mode, _debug_on, _e, debug_on, user_ip, user_name, user_address, user_phone, merchant_oid, email, payment_amount, currency, merchant_ok_url, merchant_fail_url, _user_basket, _f, user_basket, paytr_token, data, response;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
+            var _b, merchant_id, merchant_key, merchant_salt, max_installment, timeout_limit, no_installment, test_mode, debug_on, _c, user_ip, user_name, user_address, user_phone, merchant_oid, email, payment_amount, currency, merchant_ok_url, merchant_fail_url, user_basket, paytr_token, data, request, response;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        _b = this._merchantParams, merchant_id = _b.merchant_id, merchant_key = _b.merchant_key, merchant_salt = _b.merchant_salt, max_installment = _b.max_installment, timeout_limit = _b.timeout_limit, _no_installment = _b.no_installment, _c = _b.no_installment, no_installment = _c === void 0 ? _no_installment ? 1 : 0 : _c, _test_mode = _b.test_mode, _d = _b.test_mode, test_mode = _d === void 0 ? _test_mode ? 1 : 0 : _d, _debug_on = _b.debug_on, _e = _b.debug_on, debug_on = _e === void 0 ? _debug_on ? 1 : 0 : _e;
-                        user_ip = params.user_ip, user_name = params.user_name, user_address = params.user_address, user_phone = params.user_phone, merchant_oid = params.merchant_oid, email = params.email, payment_amount = params.payment_amount, currency = params.currency, merchant_ok_url = params.merchant_ok_url, merchant_fail_url = params.merchant_fail_url, _user_basket = params.user_basket, _f = params.user_basket, user_basket = _f === void 0 ? (0, utils_1.encodeUserBasket)(_user_basket) : _f;
+                        _b = (0, utils_1.prepareParams)(this._merchantParams), merchant_id = _b.merchant_id, merchant_key = _b.merchant_key, merchant_salt = _b.merchant_salt, max_installment = _b.max_installment, timeout_limit = _b.timeout_limit, no_installment = _b.no_installment, test_mode = _b.test_mode, debug_on = _b.debug_on;
+                        _c = (0, utils_1.prepareParams)(params), user_ip = _c.user_ip, user_name = _c.user_name, user_address = _c.user_address, user_phone = _c.user_phone, merchant_oid = _c.merchant_oid, email = _c.email, payment_amount = _c.payment_amount, currency = _c.currency, merchant_ok_url = _c.merchant_ok_url, merchant_fail_url = _c.merchant_fail_url;
+                        user_basket = (0, utils_1.encodeUserBasket)(params.user_basket);
                         paytr_token = (0, utils_1.calculateHash)([
                             merchant_id,
                             user_ip,
@@ -102,14 +103,21 @@ var PayTRClient = /** @class */ (function () {
                             currency: currency,
                             test_mode: test_mode,
                         };
-                        return [4 /*yield*/, this._client.post("https://www.paytr.com/odeme/api/get-token", data, {
-                                responseType: "json",
-                            })];
+                        request = {
+                            method: "POST",
+                            url: "https://www.paytr.com/odeme/api/get-token",
+                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            data: new URLSearchParams(data),
+                            responseType: "json",
+                        };
+                        return [4 /*yield*/, this._client.request(request)];
                     case 1:
-                        response = _g.sent();
+                        response = _d.sent();
+                        // Throw error if response type is not JSON (object)
                         if (typeof response.data !== "object") {
                             throw new errors_1.PayTRException("Invalid response received from PayTR", response);
                         }
+                        // Throw error if response status is not 'success'
                         if (response.data.status === "success") {
                             return [2 /*return*/, { token: response.data.token }];
                         }

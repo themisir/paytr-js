@@ -20,3 +20,24 @@ export function encodeUserBasket(basket: PayTRBasketItem[]): string {
   }
   return Buffer.from(JSON.stringify(items)).toString("base64");
 }
+
+export function prepareParams(
+  input: Record<string, any>
+): Record<string, string> {
+  const record: Record<string, string> = {};
+  for (const key in input) {
+    const value = input[key];
+    switch (typeof value) {
+      case "string":
+        record[key] = value;
+        break;
+      case "boolean":
+        record[key] = value ? "1" : "0";
+        break;
+      case "number":
+        record[key] = value.toString();
+        break;
+    }
+  }
+  return record;
+}

@@ -1,4 +1,4 @@
-export { PayTRClient, PayTRClient as default } from "./client";
+export { PayTRClient as default, PayTRClient } from "./client";
 export { PayTRException } from "./errors";
-export type { PayTRBasketItem, PayTRGetTokenParams, PayTRGetTokenResponse, PayTRValidateCallbackParams, PayTRMerchantParams, PayTRConstructorParams, PayTRCallbackParams, } from "./interfaces";
+export type { PayTRBasketItem, PayTRCallbackParams, PayTRConstructorParams, PayTRGetTokenParams, PayTRGetTokenResponse, PayTRMerchantParams, PayTRRefundParams, PayTRRefundResponse, PayTRValidateCallbackParams, } from "./interfaces";
 //# sourceMappingURL=index.d.ts.map

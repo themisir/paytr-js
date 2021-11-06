@@ -1,11 +1,16 @@
 {
   "name": "paytr",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "index.js",
   "license": "MIT",
   "type": "commonjs",
   "types": "index.d.ts",
   "typings": "./index.d.ts",
+  "readme": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/themisir/paytr-js"
+  },
   "scripts": {
     "build": "tsc",
     "prepublish": "yarn build"

@@ -1,3 +1,9 @@
+# 1.0.6
+
+## Fixes
+
+- Implemented error handling for `refund` method
+
 # 1.0.5
 
 ## Improvements

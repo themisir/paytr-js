@@ -61,9 +61,10 @@ export interface PayTRGetTokenRawResponse {
 export interface PayTRRefundRawResponse {
   status: string;
   is_test: number;
+  err_msg: string;
   merchant_oid: string;
   return_amount: number;
-  reference_no: string;
+  reference_no?: string;
 }
 
 export type PayTRRefundStatus = "success" | "failed";

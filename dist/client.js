@@ -133,13 +133,14 @@ var PayTRClient = /** @class */ (function () {
         return hash === calculatedHash;
     };
     PayTRClient.prototype.refund = function (params) {
+        var _a;
         return __awaiter(this, void 0, void 0, function () {
-            var _a, merchant_id, merchant_key, merchant_salt, _b, merchant_oid, return_amount, reference_no, paytr_token, data, request, response;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var _b, merchant_id, merchant_key, merchant_salt, _c, merchant_oid, return_amount, reference_no, paytr_token, data, request, response;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
                     case 0:
-                        _a = (0, utils_1.prepareParams)(this._merchantParams), merchant_id = _a.merchant_id, merchant_key = _a.merchant_key, merchant_salt = _a.merchant_salt;
-                        _b = (0, utils_1.prepareParams)(params), merchant_oid = _b.merchant_oid, return_amount = _b.return_amount, reference_no = _b.reference_no;
+                        _b = (0, utils_1.prepareParams)(this._merchantParams), merchant_id = _b.merchant_id, merchant_key = _b.merchant_key, merchant_salt = _b.merchant_salt;
+                        _c = (0, utils_1.prepareParams)(params), merchant_oid = _c.merchant_oid, return_amount = _c.return_amount, reference_no = _c.reference_no;
                         paytr_token = (0, utils_1.calculateHash)([merchant_id, merchant_oid, return_amount, merchant_salt], merchant_key);
                         data = {
                             merchant_id: merchant_id,
@@ -157,10 +158,13 @@ var PayTRClient = /** @class */ (function () {
                         };
                         return [4 /*yield*/, this._client.request(request)];
                     case 1:
-                        response = _c.sent();
+                        response = _d.sent();
                         // Throw error if response type is not JSON (object)
                         if (typeof response.data !== "object") {
                             throw new errors_1.PayTRException("Invalid response received from PayTR", response);
+                        }
+                        if (response.data.status === "error") {
+                            throw new errors_1.PayTRException((_a = response.data.err_msg) !== null && _a !== void 0 ? _a : "PayTR request failed", response);
                         }
                         return [2 /*return*/, {
                                 status: response.data.status,

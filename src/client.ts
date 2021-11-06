@@ -180,6 +180,13 @@ export class PayTRClient {
       );
     }
 
+    if (response.data.status === "error") {
+      throw new PayTRException(
+        response.data.err_msg ?? "PayTR request failed",
+        response
+      );
+    }
+
     return {
       status: response.data.status as PayTRRefundStatus,
       isTest: response.data.is_test == 1,

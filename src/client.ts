@@ -6,6 +6,10 @@ import type {
   PayTRGetTokenRawResponse,
   PayTRGetTokenResponse,
   PayTRMerchantParams,
+  PayTRRefundParams,
+  PayTRRefundRawResponse,
+  PayTRRefundResponse,
+  PayTRRefundStatus,
   PayTRValidateCallbackParams,
 } from "./interfaces";
 import { calculateHash, encodeUserBasket, prepareParams } from "./utils";
@@ -131,5 +135,57 @@ export class PayTRClient {
       merchant_key
     );
     return hash === calculatedHash;
+  }
+
+  public async refund(params: PayTRRefundParams): Promise<PayTRRefundResponse> {
+    const { merchant_id, merchant_key, merchant_salt } = prepareParams(
+      this._merchantParams
+    );
+    const { merchant_oid, return_amount, reference_no } = prepareParams(params);
+
+    // Callculate paytr hash
+    const paytr_token = calculateHash(
+      [merchant_id, merchant_oid, return_amount, merchant_salt],
+      merchant_key
+    );
+
+    // Request body
+    const data: Record<string, string> = {
+      merchant_id,
+      merchant_oid,
+      return_amount,
+      paytr_token,
+      reference_no,
+    };
+
+    // Prepare request
+    const request: AxiosRequestConfig = {
+      method: "POST",
+      url: "https://www.paytr.com/odeme/iade",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      data: new URLSearchParams(data),
+      responseType: "json",
+    };
+
+    const response = await this._client.request<
+      any,
+      AxiosResponse<PayTRRefundRawResponse>
+    >(request);
+
+    // Throw error if response type is not JSON (object)
+    if (typeof response.data !== "object") {
+      throw new PayTRException(
+        "Invalid response received from PayTR",
+        response
+      );
+    }
+
+    return {
+      status: response.data.status as PayTRRefundStatus,
+      isTest: response.data.is_test == 1,
+      referenceNo: response.data.reference_no,
+      merchantOid: response.data.merchant_oid,
+      returnAmount: response.data.return_amount,
+    };
   }
 }

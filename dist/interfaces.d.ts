@@ -29,6 +29,11 @@ export interface PayTRGetTokenParams {
     merchant_ok_url: string;
     merchant_fail_url: string;
 }
+export interface PayTRRefundParams {
+    merchant_oid: string;
+    return_amount: number;
+    reference_no: string;
+}
 export interface PayTRValidateCallbackParams {
     hash: string;
     merchant_oid: string;
@@ -42,6 +47,21 @@ export interface PayTRGetTokenRawResponse {
     status: string;
     reason?: string;
     token?: string;
+}
+export interface PayTRRefundRawResponse {
+    status: string;
+    is_test: number;
+    merchant_oid: string;
+    return_amount: number;
+    reference_no: string;
+}
+export declare type PayTRRefundStatus = "success" | "failed";
+export interface PayTRRefundResponse {
+    status: PayTRRefundStatus;
+    isTest: boolean;
+    merchantOid: string;
+    returnAmount: number;
+    referenceNo?: string;
 }
 export interface PayTRGetTokenResponse {
     token: string;

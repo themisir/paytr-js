@@ -1,12 +1,13 @@
-export { PayTRClient, PayTRClient as default } from "./client";
+export { PayTRClient as default, PayTRClient } from "./client";
 export { PayTRException } from "./errors";
-
 export type {
   PayTRBasketItem,
+  PayTRCallbackParams,
+  PayTRConstructorParams,
   PayTRGetTokenParams,
   PayTRGetTokenResponse,
-  PayTRValidateCallbackParams,
   PayTRMerchantParams,
-  PayTRConstructorParams,
-  PayTRCallbackParams,
+  PayTRRefundParams,
+  PayTRRefundResponse,
+  PayTRValidateCallbackParams,
 } from "./interfaces";

@@ -38,7 +38,7 @@ export interface PayTRGetTokenParams {
 export interface PayTRRefundParams {
   merchant_oid: string;
   return_amount: number;
-  reference_no: string;
+  reference_no?: string;
 }
 
 export interface PayTRValidateCallbackParams {
